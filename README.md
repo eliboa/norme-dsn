@@ -16,10 +16,14 @@ Ce projet est purement éducatif et n'est, en aucune manière, lié aux travaux 
 
 ## Principe
 
-- Un simple site web ne nécessitant aucune installation ni déploiement.
 - S'appuie sur les librairies client : Bootstrap, jQuery, jQuery UI, Bootstrap-treeview, Bootstrap-icons, SheetsJS.
 - Les données sont directement lues depuis les fichiers Excels fournis par le GIP MDS (Net-Entreprises).
 - Permet une représentation du contenu de la DSN sous forme d'arbre de noeuds (Blocs parents et enfants).
-- Les usages des blocs et rubriques (obligatoire, conditionnel, facultatif, etc.) par type de DNS (mensuelle, FCTU, etc.) sont directement affichés dans la vue de chaque bloc ou rubrique.
+- Les usages des blocs et rubriques (obligatoire, conditionnel, facultatif, etc.) par type de DSN (mensuelle, FCTU, etc.) sont directement affichés dans la vue de chaque bloc ou rubrique.
 - La navigation entre les blocs et rubriques est facile et rapide.
--Facilement utilisable en local (serverless).
+- Facilement utilisable en local (serverless).
+
+### Limitations
+
+- Ne se substitue pas au cahier technique officiel de la DSN qui contient d'amples informations sur la façon de renseigner la DSN. Il s'agit ici uniquement de la structure de la DSN.
+- Le design du site n'est pas adapté pour une utilisation sur mobile. Il est conçu pour une utilisation professionnelle depuis un Desktop.
