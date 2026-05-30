@@ -6,6 +6,10 @@ J’ai créé ce projet pour rendre le cahier technique de la DSN plus accessibl
 
 L'ensemble des données consultables sont celles qui sont publiées par le GIP Net-Entreprises.
 
+## Utilisation
+
+https://eliboa.github.io/norme-dsn/
+
 ## Avertissement
 
 Ce projet est purement éducatif et n'est, en aucune manière, lié aux travaux du GIP MDS (Net-Entreprises) ou de la MIDS (Mission interministérielle chargée du pilotage du système de collecte et d’utilisation des données sociales).
