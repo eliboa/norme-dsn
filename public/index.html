@@ -1,0 +1,276 @@
+<!-- Explorateur de la norme DSN (NEODeS) -->
+<!doctype html>
+<html lang="fr" data-bs-theme="light">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Norme DSN</title>    
+
+        <!-- Librairies requises : jQuery, jQuery UI, Bootstrap, Bootstrap-treeview, Bootstrap-icons, SheetsJS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>     
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+        <script type="text/javascript" src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script> 
+
+        <!-- App -->      
+        <script type="module" src="./index.js" defer></script>
+
+        <!-- Styles -->
+        <style>
+
+            html {
+                scroll-behavior: smooth;
+            }
+            body {
+                min-width: 100vw;
+                min-height: 100vh;   
+                max-width: 100vw;
+                max-height: 100vh;  
+                overflow: hidden;
+            }
+
+            .sticky-header{
+                height: 56px;
+            }
+
+            .sticky-header .navbar {
+                background-color: var(--bs-indigo) !important;
+                color: white;
+            }
+
+            .sticky-header .nav-link, .sticky-header .nav-link.active {
+                color: white;
+            }
+
+            main {
+                display: flex;
+                height: calc(100vh - 56px); /* hauteur restante sous le header */
+            }
+
+            label {
+                color: var(--bs-primary-text-emphasis);
+            }
+
+            .indigo {
+                color: var(--bs-indigo) !important;
+            }
+
+            .highlight {
+                background-color: var(--bs-indigo) !important;
+                color: #fff !important;
+            }
+            .card-header {
+                transition: background-color 0.25s ease-in-out; /* Permet le fondu aller/retour */
+            }
+
+            .title {
+                color: var(--bs-emphasis-color) !important;
+            }
+
+            #sidebar {
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                overflow: hidden;
+                max-width: fit-content;
+                width: 30%;
+                border-right: 1px solid var(--bs-secondary);
+            }
+
+            #sidebar-body {
+                height: calc(100vh - 50px); /* adapte à la hauteur du header */
+                overflow-y: auto;
+            }
+
+            #sidebar-header {
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background: var(--bs-body-bg); /* pour éviter transparence */
+            }
+
+            #sidebar-tree {
+                height: 100%;                
+                overflow-y: auto;
+            }
+
+            #view-container {
+                flex: 1;
+                display: flex;
+            }
+            
+            #view {
+                flex: 1;
+                overflow-y: auto;
+            }
+
+            .node-sidebar-tree {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                padding: 0.3rem;
+                font-size:small;
+            }
+
+            .node-sidebar-tree:hover{
+                background-color: var(--bs-highlight-color) !important;
+                color: var(--bs-body-bg) !important;
+            }
+
+            .node-sidebar-tree .icon {
+                padding-right: 0.3rem;
+                opacity: 100%;
+            }
+
+            .node-selected {
+                background-color: var(--bs-indigo) !important;
+            }
+            
+            .icon-none {
+                width: 17px !important;
+                display: inline-block;
+            }
+
+            .description {
+                font-style: italic;        
+            }
+
+            .ui-menu-item {
+                background-color: var(--bs-body-bg);
+                color: var(--bs-body-color)
+            }
+
+            .h-title {
+                border-bottom: 1px solid black;
+                padding-bottom: 0.5rem;
+            }
+
+            #backToTop {
+                position: fixed;   
+                bottom: 30px;      
+                right: 30px;       
+                z-index: 9999; /* Augmenté pour être sûr de passer au-dessus des templates et de la sidebar */
+                width: 50px;
+                height: 50px;
+                padding: 0;
+                font-size: 24px; /* Aligne la taille de l'icône */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3); 
+                transition: all 0.3s ease;
+                background-color: var(--bs-indigo-border-subtle);
+            }
+
+
+        </style>
+    </head>
+
+    <!-- BODY -->
+    <body>
+
+        <!-- Navbar -->
+        <div class="sticky-header sticky-top" data-bs-theme="dark">
+            <nav class="navbar navbar-expand-lg">
+                <div class="container-fluid">
+                    <div class="nav-brand lh-1">
+                        <span class="fs-2">&#123;</span>
+                        <span class="fs-4">Norme DSN</span>
+                        <span class="fs-2">&#125;</span>
+                    </div>
+                    <div class="d-flex">
+                        <div class="d-flex justify-content-center" >
+                            <div class="spinner-border  text-dark" role="status" style="width: 1.6rem; height: 1.6rem;display: none;" id="source-spinner">
+                            <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="input-group" style="margin-left: 0.5rem;">
+                            <label class="input-group-text" for="data-source"><i class="bi bi-git" data-bs-toggle="tooltip" data-bs-title="Version de norme" data-bs-placement="bottom"></i></label>
+                            <select class="form-select form-select-sm" aria-label="Source de données" id="data-source"  style="margin-right: 10px;">
+                            </select>
+                        </div>
+                        <div style="margin:auto;">
+                            <a id="switch-theme-mode" class="nav-link light" aria-current="page" href="#" data-bs-toggle="tooltip" data-bs-title="Activer mode sombre">
+                                <i class="bi bi-moon-stars-fill"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Main content -->
+        <main>
+            <!-- Spinner -->
+            <div class="spinner spinner-border m-auto" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <!-- Sidebar -->
+            <div id="sidebar" style="display:none;">
+                <div id="sidebar-header" class="d-flex m-2">
+                    <div class="m-auto"><i class="bi bi-search"></i></div>
+                    <input type="text" class="form-control form-control-sm ms-2" id="tree-search-input" placeholder="Rechercher des les blocs et rubriques...">
+                    <div class="m-auto"><a href="#" id="expand-all-btn" class="indidgo" data-bs-toggle="tooltip" data-bs-title="Tout développer"><i class="bi bi-plus-circle m-1"></i></a></div>
+                    <div class="m-auto"><a href="#" id="collapse-all-btn"class="indidgo" data-bs-toggle="tooltip" data-bs-title="Tout réduire"><i class="bi bi-dash-circle m-1"></i></a></div>
+                </div>
+                <div id="sidebar-body">
+                    <div id="sidebar-tree"></div>
+                </div>            
+            </div>
+            <!-- Right View -->
+            <div id="view-container" style="display:none;">
+                <div id="view" class="container-fluid"></div>
+            </div>            
+        </main>   
+        <button type="button" id="backToTop" class="btn btn-primary rounded-circle indigo" style="display: none;"><i class="bi bi-arrow-up-circle-fill"></i></button>     
+
+        <!-- TEMPLATES -->
+
+        <!-- Block -->
+        <template id="block-view-template">        
+            <h2 class="mt-4 title"><i class="bi bi-braces"></i> <span class="titre"></span></h2>            
+            <div class="row">
+                <div class="col"><label><b>Cardinalité minimale :</b></label> <span class="lower-bound"></span></div>
+                <div class="col"><label><b>Cardinalité maximale :</b></label> <span class="upper-bound"></span></div>
+            </div>
+            <h3 class="mt-4 title description-title"><i class="bi bi-list"></i> Description</h3>    
+            <p class="description lh-lg mt-3"></p>
+            <div class="usages-container">
+                <h3 class="mt-4 title"><i class="bi bi-gear-wide-connected"></i> Usage selon le type de DSN</h3>    
+                <p class="usages lh-lg mt-3" style="font-size: small"></p>
+            </div>
+            <h3 class="mt-4 title"><i class="bi bi-input-cursor"></i>  Rubriques</h3>
+            <div class="fields-summary mt-3 ms-4" style="font-size: small"></div>
+            <div class="fields mt-3"></div>
+        </template>
+
+        <!-- Field -->
+        <template id="field-template">
+            <div class="card mb-3" style="width: 100%;">
+                <div class="card-header">
+                    <div class="row align-items-start">
+                        <div class="col"><h5 class="card-title"><span id="name"></span></h5></div>
+                        <div class="col"><div class="text-end m-auto font-monospace fw-bold title"><h5 id="id"></h5></div></div>
+                    </div>   
+                </div>
+                <div class="card-body" style="font-size: small">
+                    <h6 class="h-title"><i class="bi bi-list"></i> Description</h5>
+                    <p id="description" class="lh-lg"></p>
+                    <h6 class="h-title mt-4"><i class="bi bi-code-square"></i> <span id="format-title">Type (longueur)</span></h5>
+                    <p id="format" class="font-monospace"></p>
+                    <div id="usages">
+                        <h6 class="h-title mt-4"><i class="bi bi-gear-wide-connected"></i> Usage selon le type de DSN</h5>
+                    </div>
+                    <div id="controles">
+                        <h6 class="h-title mt-4"><i class="bi bi-ui-checks-grid"></i> Contrôles</h5>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </body>
+</html>
