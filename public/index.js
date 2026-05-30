@@ -63,6 +63,8 @@ function treeFromData(data)
             "Id": "S10.G00.00",
             "Name": "Envoi",
             "Description": "En-tête",
+            upperBound: '1',
+            lowerBound: '1',
             fields: data.Fields.filter(f => f['Block Id'] === 'S10.G00.00')
         }
     }]
@@ -190,7 +192,8 @@ function $fieldCard(field) {
 }
 
 function usageLabel(u) {
-    if (u === 'O') return '<span class="text-danger">Obligatoire ❗</span>';
+    if (u === 'O') return '<span class="text-danger">Obligatoire❗</span>';
+    if (u === 'R') return '<span class="text-danger">Requis (le cas échéant)</span>';
     if (u === 'N') return '<span class="text-secondary">Non requis</span>';
     if (u === 'F') return '<span class="text-success">Facultatif</span>';
     if (u === 'C') return '<span class="text-warning">Conditionnel</span>';
@@ -225,12 +228,12 @@ function generateViewFromNode(node, scrollToFieldKey = null)
     $('.lower-bound', $view).html(formatBound(block.lowerBound));
     $('.upper-bound', $view).html(formatBound(block.upperBound));
 
-    // 
+    // 📋 Générer la liste des usages
     const $usages = $('.usages', $view);
     const usagesHtmlArray = block.Usages?.map(u => `
         <div class="row">
-            <div class="col-9">${u.description}</div>
-            <div class="col-1">${usageLabel(u.value)}</div>
+            <div class="col-6">${u.description}</div>
+            <div class="col-2">${usageLabel(u.value)}</div>
         </div>
     `);
     $usages.append(usagesHtmlArray?.join(''));

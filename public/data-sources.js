@@ -16,7 +16,7 @@ const sources = [
     },
     {
         norme: 'P25V01',
-        ctFile: 'dsn-datatypes-CT2027.xlsx',
+        ctFile: 'dsn-datatypes-CT2025.xlsx',
         usagesFile: 'dsn-tableau-des-usages-CT2025.1.xlsx',
         distantUrl: 'https://www.net-entreprises.fr/media/documentation'
     }
@@ -108,9 +108,12 @@ async function fetchData(source) {
     });
 
     // Pour chaque field...
+    const existingBlocks = new Set(data.Blocks.map(b => b.Id));
     data.Fields.forEach(f => {
         // Ramener le DataType et les contrôles le field 
         const key = f['Block Id'] + '.' + f.Id;    
+        f._sortKey = key;
+
         f.DataType = dataTypeMap.get(f['DataType Id']) || null;
         const rawControls = messagesMap.get(key) || [];
         f.Controls = rawControls.map(m => ({
@@ -120,7 +123,7 @@ async function fetchData(source) {
         }));
 
         // Si le field est orphelin de block, on ajoute le block manuellement
-        if (!data.Blocks.some(b => b.Id === f['Block Id']) && f['Block Id'] !== 'S10.G00.00') {
+        if (!existingBlocks.has(f['Block Id']) && f['Block Id'] !== 'S10.G00.00') {
             data.Blocks.push({
                 Id: f['Block Id'],
                 Name: f.Comment?.split('.')?.[0],
@@ -129,18 +132,13 @@ async function fetchData(source) {
                 lowerBound: '1',
                 upperBound: '1'
             });
+            existingBlocks.add(f['Block Id']);
         }
     });
 
-    // Trier les blocks par ordre alphabétique
-    data.Blocks.sort((a, b) => a.Id.localeCompare(b.Id));
-
-    // Trier les fields par ordre alphabétique
-    data.Fields.sort((a, b) => {
-        const keyA = a['Block Id']+'.'+a.Id;
-        const keyB = b['Block Id']+'.'+b.Id;
-        return keyA.localeCompare(keyB);
-    });
+    // Trier les blocks et fields
+    data.Blocks.sort((a, b) => a.Id > b.Id ? 1 : -1);
+    data.Fields.sort((a, b) => a._sortKey > b._sortKey ? 1 : -1);
 
     source.data = data;
 
@@ -156,12 +154,17 @@ async function fetchData(source) {
                 raw: false,      // interprétation des valeurs (dates, etc.)
                 range: 1        // <--- Commence à la 2ème ligne (index 1) pour les entêtes
             });
+
+            // Extraire les usages
             const usages = {}, usagesTypes = [], usagesMap = new Map();
             const regex = /^\d{2} -/;
-            sheetData.filter(row => {
+            // Filtre les lignes de rubriques
+            sheetData.filter(row => { 
                 const dsnPattern = /(S\d{2}\.G\d{2}\.\d{2}(?:\.\d{3})?)/g;
                 return dsnPattern.test(row.Rubrique);
-            }).forEach(row => {
+            })
+            // Extraire les usages en récupérant type, description, valeur et blockId
+            .forEach(row => {
                 usages[row.Rubrique.trim()] = Object.keys(row).filter(prop => regex.test(prop)).map(prop => {
                     const type = prop.split(' - ')[0].trim();
                     const usageObj = {
@@ -177,8 +180,10 @@ async function fetchData(source) {
                     return usageObj;
                 });
             });
+            // Lier les usage au data source
             source.data.Usages = usages;
 
+            // Déterminer les usages des blocks en fonction des usages de leurs rubriques
             data.Blocks.forEach(block => {      
                 const bUsages = [];
                 Object.keys(usages).filter(u => {
@@ -190,7 +195,7 @@ async function fetchData(source) {
                     usagesTypes.forEach(type => {
                         let usage = 'N', usages = bUsages.filter(u => u.type === type);
                         if (usages.some(u => u.value === 'O'))
-                            usage = 'O';
+                            usage = block.lowerBound === '0' ? 'R' : 'O';
                         else if (usages.some(u => u.value === 'C'))
                             usage = 'C';  
                         else if (usages.some(u => u.value === 'F'))
