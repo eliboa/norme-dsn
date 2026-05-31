@@ -306,18 +306,28 @@ function $descriptionToHtmlElement(description) {
  * @param {boolean} pushToBrowser 
  */
 function routeTo(route, pushToBrowser = true) {
-    const routeType = route?.split('.').length - 1 === 3 ? 'field' : 'block';
-    let fieldKey = routeType == 'field' ? route : null;
-    let blockId = routeType == 'block' ? route : route?.split('.').slice(0, 3).join('.');
-    const selectedNode = findInNodes(blockId, tree);
-    if (selectedNode) {
+    const $home = $('#landing-page');
+    const $view = $('#view');
+    $home.hide(); $view.show();
+    if (!route || route == 'home') {
+        $home.show(); $view.hide();
+        const selected = treeview.getSelected()?.[0];
+        if (selected) treeview.unselectNode(selected.nodeId, { silent: true });
+    }
+    else {
+        const routeType = route?.split('.').length - 1 === 3 ? 'field' : 'block';
+        let fieldKey = routeType == 'field' ? route : null;
+        let blockId = routeType == 'block' ? route : route?.split('.').slice(0, 3).join('.');
+        const selectedNode = findInNodes(blockId, tree);
+        if (!selectedNode) return;
+        
         // Désactive le trigger automatique de 'nodeSelected' pour éviter les boucles
         selectNodeByKey(selectedNode.key, true); 
-        generateViewFromNode(selectedNode, fieldKey);
-
-        // 💡 Synchro Navigateur : On pousse la route dans l'historique du navigateur
-        if (pushToBrowser) history.pushState({ route: route }, null, "");
+        generateViewFromNode(selectedNode, fieldKey);        
     }
+
+    // 💡 Synchro Navigateur : On pousse la route dans l'historique du navigateur
+    if (pushToBrowser) history.pushState({ route: route }, null, "");    
 }
 
 /**
@@ -370,24 +380,19 @@ async function initApp()
     });
 
     // 5️⃣ Gérer le niveau d'expand initial et le noeud sélectionné par défaut
-    treeview.expandAll({ silent: true, levels: 3 }); // ➕ Faire un expand sur l'arbre sur 3 niveaux
-
-    if (routeArg) {
-        setTimeout(() => { 
-            routeTo(routeArg); 
-            routeArg = null;
-        }, 100);
-    } else {
-        const selectedNode = findInNodes('S21.G00.30', tree) ?? tree?.[0];    
-        if (selectedNode) {
-            selectNodeByKey(selectedNode.key);
-            history.replaceState({ route: selectedNode.key }, null, "");
-        }
-    }
+    /// ➕ Faire un expand sur l'arbre sur 4 niveaux
+    treeview.expandAll({ silent: true, levels: 4 });
+    /// Si une route est passée en querystring on redirigne vers cette route 
+    if (routeArg) setTimeout(() => { routeTo(routeArg); routeArg = null; }, 100);
+    /// Sinon on redirige vers la page d'accueil
+    else routeTo('home');
+            
     // 6️⃣ Générer les tooltips Bootstrap à ce stade ça ne fait pas de mal ^^
     $('[data-bs-toggle="tooltip"]').tooltip();
 
     // 7️⃣ Gérer les actions dans les sticky bars (main & sidebar) et autres...
+    /// 🏠 Bouton accueil
+    $('.nav-brand').off('click').on('click', () => routeTo('home'));
     /// 💡 Gestion du switch dark/light mode
     const tt = bootstrap.Tooltip.getOrCreateInstance('#switch-theme-mode');
     function switchMode(mode) {
@@ -472,12 +477,13 @@ async function initApp()
             $option.prop('selected', true);
         $sources.append($option);
     })
-
+    $('.version-norme-cournante').text(DataSource.selected.norme);
     $sources.change(function() {
         const selectedNorme = $(this).val();
         const selectedSource = DataSource.find(s => s.norme === selectedNorme);
         if (selectedSource) {
             DataSource.selected = selectedNorme;
+            $('.version-norme-cournante').text(DataSource.selected.norme);
             callWithLoadingSpinner(initApp);
         }
     });
@@ -485,7 +491,7 @@ async function initApp()
     /// 📏 Permettre le redimensionnement la sidebar
     $("#sidebar").resizable({
         handles: "e", // 'e' pour East : redimensionnement uniquement par le bord droit
-        maxWidth: 500,
+        maxWidth: 'fit-content',
         minWidth: 200
     });
 

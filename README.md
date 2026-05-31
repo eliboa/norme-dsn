@@ -25,5 +25,7 @@ Ce projet est purement éducatif et n'est, en aucune manière, lié aux travaux 
 
 ### Limitations
 
-- Ne se substitue pas au cahier technique officiel de la DSN qui contient d'amples informations sur la façon de renseigner la DSN. Il s'agit ici uniquement de la structure de la DSN.
 - Le design du site n'est pas adapté pour une utilisation sur mobile. Il est conçu pour une utilisation professionnelle depuis un Desktop.
+- Cet outil est dédié exclusivement à la consultation des blocs (hiérarchie et cardinalité) et des rubriques (format, valorisation, usages et contrôles). Il ne détaille ni les principes généraux de la DSN, ni ses applications spécifiques.
+- Pour approfondir le sujet, rendez-vous sur la [base de connaissance de la DSN de Net-Entreprises.fr](https://net-entreprises.custhelp.com/app/answers/list_theme_dsn/p/1899)
+

@@ -167,6 +167,9 @@
                 background-color: var(--bs-indigo-border-subtle);
             }
 
+            .pointer {
+                cursor: pointer;
+            }
 
         </style>
     </head>
@@ -178,7 +181,7 @@
         <div class="sticky-header sticky-top" data-bs-theme="dark">
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <div class="nav-brand lh-1">
+                    <div class="nav-brand lh-1 pointer">
                         <span class="fs-2">&#123;</span>
                         <span class="fs-4">Norme DSN</span>
                         <span class="fs-2">&#125;</span>
@@ -224,6 +227,26 @@
             </div>
             <!-- Right View -->
             <div id="view-container" style="display:none;">
+                <div id="landing-page" class="container" style="display:none">
+                    <h2 class="mt-4 mb-4">Bienvenue sur l'explorateur des blocs et rubriques DSN <span class="version-norme-cournante"></span></h2>
+                    <p class="mb-4">
+                        👈 Vous pouvez utiliser le menu de gauche pour naviguer et rechercher dans la norme. 
+                    </p>
+                    <p class="mb-4 text-end">
+                        Changer la version de la norme en haut à droite de l'écran 👆 
+                    </p>
+                    <p class="mb-4">
+                        <div class="alert alert-warning d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle m-3"></i>
+                            <div>
+                                Cet outil est dédié exclusivement à la consultation des blocs (hiérarchie et cardinalité) et des rubriques (format, valorisation, usages et contrôles). <br>
+                                Il ne détaille ni les principes généraux de la DSN, ni ses applications spécifiques. <br>
+                                Pour approfondir le sujet, rendez-vous sur <a href="https://net-entreprises.custhelp.com/app/answers/list_theme_dsn/p/1899" target="_blank">la base de connaissance DSN de Net-Entreprises.fr</a>
+                            </div>
+                        </div>
+                        
+                    </p>
+                </div>
                 <div id="view" class="container-fluid"></div>
             </div>            
         </main>   
