@@ -157,8 +157,9 @@ function $fieldCard(field) {
                 <div class="col justify-content-center font-monospace" style="max-width: 5rem !important;">${c.Name}</div>
                 <div class="col">
                     <span class="description">${c.Description ? $descriptionToHtmlElement(c.Description).html() : ''}</span>
-                    <br/>
-                    <span class="message">${c.Message ? $descriptionToHtmlElement(c.Message).html() : ''}</span>
+                    <div class="italic mt-2 text-secondary">
+                        Message : <span class="message">${c.Message ? $descriptionToHtmlElement(c.Message).html() : ''}</span>
+                    </div>
                 </div>
             </div>
         `);
@@ -181,8 +182,8 @@ function $fieldCard(field) {
         // On accumule les structures HTML pures sous forme de chaînes de caractères
         const usagesHtmlArray = usages.map(u => `
             <div class="row">
-                <div class="col-9">${u.description}</div>
-                <div class="col-1">${usageLabel(u.value)}</div>
+                <div class="col-6">${u.description}</div>
+                <div class="col-auto">${usageLabel(u.value)}</div>
             </div>
         `);
         $usages.append(usagesHtmlArray?.join(''));
@@ -233,7 +234,7 @@ function generateViewFromNode(node, scrollToFieldKey = null)
     const usagesHtmlArray = block.Usages?.map(u => `
         <div class="row">
             <div class="col-6">${u.description}</div>
-            <div class="col-2">${usageLabel(u.value)}</div>
+            <div class="col-auto">${usageLabel(u.value)}</div>
         </div>
     `);
     $usages.append(usagesHtmlArray?.join(''));
