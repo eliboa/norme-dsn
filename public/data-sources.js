@@ -2,7 +2,7 @@
 import * as XLSX from './lib/xlsx.js';
 
 // Le cache peut être désactivé pour forcer le rechargement des données (pratique en developpement)
-const CACHE_ACTIVATED = false;
+const CACHE_ACTIVATED = true;
 // Config des sources de données des CT DSN
 const sources = [
     {
