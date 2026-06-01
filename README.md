@@ -8,7 +8,7 @@ L'ensemble des données consultables sont celles qui sont publiées par le GIP N
 
 ## Utilisation
 
-https://eliboa.github.io/norme-dsn/
+https://norme-dsn.vercel.app/
 
 ## Avertissement
 

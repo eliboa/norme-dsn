@@ -2,26 +2,26 @@
 import * as XLSX from './lib/xlsx.js';
 
 // Le cache peut être désactivé pour forcer le rechargement des données (pratique en developpement)
-const CACHE_ACTIVATED = true;
+const CACHE_ACTIVATED = false;
 // Config des sources de données des CT DSN
 const sources = [
     {
         norme: 'P27V01',
         ctFile: 'dsn-datatypes-CT2027.xlsx',
         usagesFile: 'dsn-tableau-des-usages-CT2027.1.xlsx',
-        distantUrl: 'https://www.net-entreprises.fr/media/documentation',
+        distantUrl: 'https://www.net-entreprises.fr/media/documentation/',
         selected: true
     },
     {
         norme: 'P26V01',
         ctFile: 'dsn-datatypes-CT2026.xlsx',
-        distantUrl: 'https://www.net-entreprises.fr/media/documentation'
+        distantUrl: 'https://www.net-entreprises.fr/media/documentation/'
     },
     {
         norme: 'P25V01',
         ctFile: 'dsn-datatypes-CT2025.xlsx',
         usagesFile: 'dsn-tableau-des-usages-CT2025.1.xlsx',
-        distantUrl: 'https://www.net-entreprises.fr/media/documentation'
+        distantUrl: 'https://www.net-entreprises.fr/media/documentation/'
     }
 ]
 
@@ -73,7 +73,7 @@ export default class DataSource extends Array {
             return data;
 
         // Récupérer le fichier Excel du Cahier technique distant
-        const url = (this._clientSide ? './assets' : source.distantUrl) + '/' + source.ctFile;
+        const url = (this._clientSide ? '/api/doc-gip?filename=' : source.distantUrl)  + source.ctFile;
         const response = await fetch(url);
         if (!response.ok)
             return data;
@@ -150,7 +150,7 @@ export default class DataSource extends Array {
 
         // Récupérer le fichier Excel des usages (s'il existe)
         if (source.usagesFile) {
-            const url = (this._clientSide ? './assets' : source.distantUrl) + '/' + source.usagesFile;
+            const url = (this._clientSide ? '/api/doc-gip?filename=' : source.distantUrl) + source.usagesFile;
             const usagesResponse = await fetch(url);
             let _data = await usagesResponse.arrayBuffer();
             const usagesWorkbook = XLSX.read(_data, { type: "array" });
