@@ -1,6 +1,6 @@
 # Norme DSN
 
-Application web 100% frontend permettant d'explorer la norme DSN (NEODeS).
+Application web serverless permettant d'explorer la norme DSN (NEODeS).
 
 J’ai créé ce projet pour rendre le cahier technique de la DSN plus accessible, la version officielle au format PDF n’étant pas des plus lisibles.
 
@@ -9,6 +9,10 @@ L'ensemble des données consultables sont celles qui sont publiées par le GIP N
 ## Utilisation
 
 https://norme-dsn.vercel.app/
+
+Utiliser le query param `route` pour acceder directement :
+- Un bloc, par exemple : https://norme-dsn.vercel.app/?route=S21.G00.30
+- Une rubrique, par exemple : https://norme-dsn.vercel.app/?route=S21.G00.40.035
 
 ## Avertissement
 
@@ -29,3 +33,13 @@ Ce projet est purement éducatif et n'est, en aucune manière, lié aux travaux 
 - Cet outil est dédié exclusivement à la consultation des blocs (hiérarchie et cardinalité) et des rubriques (format, valorisation, usages et contrôles). Il ne détaille ni les principes généraux de la DSN, ni ses applications spécifiques.
 - Pour approfondir le sujet, rendez-vous sur la [base de connaissance de la DSN de Net-Entreprises.fr](https://net-entreprises.custhelp.com/app/answers/list_theme_dsn/p/1899)
 
+### Déploiement
+
+Le projet est déployé et hebergé sur Vercel (https://vercel.com).
+Si vous forkez ce repo, vous devrez créer un projet Vercel (gratuit) et le lier à votre repo :
+``` 
+npm i -g vercel 
+vercel dev
+```
+Vous pouvez utiliser un autre fournisseur (Cloudflare, Firebase, Supabase, etc.) si vous le souhaitez.
+Les fonctions backend serverless se trouve dans /api.
