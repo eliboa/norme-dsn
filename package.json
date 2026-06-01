@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "Explorateur de la norme DSN (NEODeS)",
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'Static site - no build needed'"
-  },
   "keywords": [
     "dsn",
     "norme"
